@@ -14,17 +14,22 @@ interface DeviceRegistrationData {
  */
 export const createDevice = async (deviceData: DeviceRegistrationData) => {
     const { name, location, owner_email } = deviceData;
+    try {
+        const deviceId = `iot-${crypto.randomBytes(8).toString('hex')}`;
+        const apiKey = crypto.randomBytes(32).toString('hex');
 
-    const deviceId = `iot-${crypto.randomBytes(8).toString('hex')}`;
-    const apiKey = crypto.randomBytes(32).toString('hex');
-
-    const query = `
+        const query = `
         INSERT INTO devices (device_id, name, location, owner_email, api_key)
         VALUES ($1, $2, $3, $4, $5)
         RETURNING id, device_id, name, created_at;
     `;
-    const values = [deviceId, name, location, owner_email, apiKey];
+        const values = [deviceId, name, location, owner_email, apiKey];
 
-    const result = await pool.query(query, values);
-    return { newDevice: result.rows[0], apiKey };
+        const result = await pool.query(query, values);
+        return { newDevice: result.rows[0], apiKey };
+    }
+    catch (error: any) {
+        console.error('Error creating device:', error);
+        throw error;
+    }
 };
