@@ -1,4 +1,9 @@
 import { Pool, PoolClient } from 'pg';
+import logger from '../utils/logger.utils';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 
 // PostgreSQL connection pool configuration
 const pool = new Pool({
@@ -14,10 +19,10 @@ const pool = new Pool({
 export async function connectToPostgreSQL(): Promise<void> {
     try {
         const client: PoolClient = await pool.connect();
-        console.log('✅ Connected to PostgreSQL database successfully');
+        logger.log('✅ Connected to PostgreSQL database successfully');
         client.release();// Release the client back to the pool
     } catch (error: any) {
-        console.error('❌ Error connecting to PostgreSQL database:', error);
+        logger.error('❌ Error connecting to PostgreSQL database:', error);
         throw error;
     }
 };
@@ -28,10 +33,10 @@ export async function testDatabaseConnection(): Promise<void> {
     try {
         const client = await pool.connect();
         const result = await client.query('SELECT NOW()');
-        console.log('✅ Database connection successful:', result.rows[0]);
+        logger.log('✅ Database connection successful:', result.rows[0]);
         client.release(); // Release the client back to the pool
     } catch (error: any) {
-        console.error('❌ Error during database connection:', error);
+        logger.error('❌ Error during database connection:', error);
         throw error;
     }
 };

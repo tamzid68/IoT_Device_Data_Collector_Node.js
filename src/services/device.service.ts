@@ -1,5 +1,6 @@
 import crypto from 'crypto';
-//import pool from '../config/db';
+import pool from '../config/database.config';
+import logger from '../utils/logger.utils';
 
 interface DeviceRegistrationData {
     name: string;
@@ -29,7 +30,7 @@ export const createDevice = async (deviceData: DeviceRegistrationData) => {
         return { newDevice: result.rows[0], apiKey };
     }
     catch (error: any) {
-        console.error('Error creating device:', error);
+        logger.error('Error creating device:', error);
         throw error;
     }
 };

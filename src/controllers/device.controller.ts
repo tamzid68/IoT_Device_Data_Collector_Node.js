@@ -1,13 +1,9 @@
 import { Request, Response } from 'express';
 import * as deviceService from '../services/device.service';
+import logger from '../utils/logger.utils';
 
 export const registerDevice = async (req: Request, res: Response) => {
     const { name, location, owner_email } = req.body;
-
-    if (!name || !owner_email) {
-        return res.status(400).json({ message: 'Name and owner_email are required' });
-    }
-
     try {
         const { newDevice, apiKey } = await deviceService.createDevice({
             name,
@@ -17,7 +13,7 @@ export const registerDevice = async (req: Request, res: Response) => {
 
         res.status(201).json({ message: 'Device registered successfully', device: newDevice, apiKey });
     } catch (error) {
-        console.error('Error registering device:', error);
+        logger.error('Error registering device:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 };

@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import deviceRoutes from './routes/device.routes';
 import { connectToPostgreSQL, testDatabaseConnection } from './config/database.config';
+import logger from './utils/logger.utils';
 
 dotenv.config();
 
@@ -23,9 +24,9 @@ app.use('/api/v1/devices', deviceRoutes);
 
 // Start the server
 app.listen(PORT, async () => {
-    console.log(`🚀 Server is running on port ${PORT}`);
-    console.log(`📡 API available at http://localhost:${PORT}`);
-    console.log(`🔗 Try: http://localhost:${PORT}/api/hello`);
+    logger.log(`🚀 Server is running on port ${PORT}`);
+    logger.log(`📡 API available at http://localhost:${PORT}`);
+    logger.log(`🔗 Try: http://localhost:${PORT}/api/hello`);
 
     // Connect to PostgreSQL database
     try {
