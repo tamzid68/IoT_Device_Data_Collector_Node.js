@@ -3,12 +3,15 @@ import * as deviceService from '../services/device.service';
 import logger from '../utils/logger.utils';
 
 export const registerDevice = async (req: Request, res: Response) => {
-    const { name, location, owner_email } = req.body;
+    // The body is already validated by the registerDeviceValidator middleware
+    const { name, location, owner_email, model, firmware } = req.body;
     try {
         const { newDevice, apiKey } = await deviceService.createDevice({
             name,
             location,
             owner_email,
+            model,
+            firmware,
         });
 
         res.status(201).json({ message: 'Device registered successfully', device: newDevice, apiKey });
