@@ -1,3 +1,13 @@
+import { DeviceModel } from "../models/device.model";
+
+declare global {
+    namespace Express {
+        export interface Request {
+            device?: DeviceModel;
+        }
+    }
+}
+
 export interface Device {
     id: string;
     name: string;
@@ -22,3 +32,4 @@ export interface Alert {
     createdAt: Date;
     updatedAt: Date;
 }
+

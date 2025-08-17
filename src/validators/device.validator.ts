@@ -1,22 +1,5 @@
-import { body, validationResult } from 'express-validator';
-import { Request, Response, NextFunction } from 'express';
-import logger from '../utils/logger.utils';
-
-/**
- * Middleware to handle the results of express-validator.
- * If there are validation errors, it sends a 400 response with details.
- * Otherwise, it passes control to the next middleware in the chain.
- */
-const handleValidationErrors = (req: Request, res: Response, next: NextFunction) => {
-    try {
-        validationResult(req).throw();
-        return next();
-    } catch (error: any) {
-        // This is a client-side error, not a server error.
-        // The `throw()` method populates the error object, which we send back to the client.
-        return res.status(400).json({ errors: error.array() });
-    }
-};
+import { body } from 'express-validator';
+import {handleValidationErrors} from '../middleware/validation.middleware';
 
 /**
  * An array of validation middleware for the device registration endpoint.

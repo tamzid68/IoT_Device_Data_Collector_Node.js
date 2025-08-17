@@ -10,8 +10,13 @@ const warn = (message: string, ...args: any[]) => {
     console.warn(`[WARN] ${new Date().toISOString()}: ${message}`, ...args);
 };
 
+const info = (message: string, ...args: any[]) => {
+    console.log(`[INFO] ${new Date().toISOString()}: ${message}`, ...args);
+};
+
 export default {
     log,
     error,
-    warn
+    warn,
+    info
 };
