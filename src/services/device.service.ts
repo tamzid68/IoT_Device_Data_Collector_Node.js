@@ -36,3 +36,25 @@ export const createDevice = async (deviceData: DeviceRegistrationData) => {
         throw error;
     }
 };
+
+/**
+ * Finds a device by its unique API key and returns its ID.
+ * This is optimized for authentication purposes.
+ * @param apiKey The API key to search for.
+ * @returns The device object with its ID if found, otherwise null.
+ */
+
+export const findDeviceByApiKey = async (apiKey: string) => {
+    try {
+        const query = 'SELECT device_id FROM devices WHERE api_key = $1';
+        const result = await executeQuery(query, [apiKey]);
+
+        if (result.rows.length === 0) {
+            return null; // Device not found
+        }
+        return result.rows[0]; // Return the device object with its ID
+    } catch (error: any) {
+        logger.error('Error finding device by API key:', error);
+        throw error;
+    }
+};

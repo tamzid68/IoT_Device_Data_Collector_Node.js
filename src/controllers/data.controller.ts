@@ -3,8 +3,9 @@ import { saveReading } from "../services/data.service";
 import logger from '../utils/logger.utils';
 
 export const ingestData = async (req: Request, res: Response) => {
-    // The `authenticateDevice` middleware guarantees `req.device` exists.
-    // We use the non-null assertion operator `!` to tell TypeScript this.
+    // The `apiKeyAuth` middleware guarantees `req.device` exists.
+    // We use the non-null assertion operator `!` to tell TypeScript this and
+    // access the `device_id` from the device object.
     const deviceId = req.device!.device_id;
     const payload = req.body;
 
@@ -19,3 +20,18 @@ export const ingestData = async (req: Request, res: Response) => {
         res.status(500).json({ message: 'Internal server error while saving data.' });
     }
 };
+
+export const test = async(req: Request, res: Response) => {
+    try{
+        const result = req.device; // This will contain the authenticated device information
+        console.log('Test route hit',result);
+        res.status(201).json({
+            message: 'Test route hit successfully',
+            device: req.device // This will contain the authenticated device information
+        });
+
+    }catch (error: any) {
+        logger.error('Error in test route:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}

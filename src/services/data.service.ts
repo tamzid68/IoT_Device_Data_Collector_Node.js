@@ -1,6 +1,7 @@
 import { pool } from '../configs/database.config';
 import { ReadingModel } from '../models/reading.model';
 import logger from "../utils/logger.utils";
+import { Request } from "express";
 
 interface ReadingPayload {
     temperature?: number;
@@ -14,7 +15,7 @@ export const saveReading = async (deviceId: string, payload: ReadingPayload): Pr
     const { temperature, humidity } = payload;
     // The timestamp is already a Date object thanks to the validator's .toDate() sanitizer.
     const readingTime = payload.timestamp || new Date();
-
+    
     // Get a client from the pool to run multiple queries in a transaction
     const client = await pool.connect();
 
