@@ -1,14 +1,10 @@
 import { pool } from '../configs/database.config';
-import { ReadingModel } from '../models/reading.model';
+import { ReadingModel, ReadingPayload } from '../models/reading.model';
 import logger from "../utils/logger.utils";
-import { Request } from "express";
 
-interface ReadingPayload {
-    temperature?: number;
-    humidity?: number;
-    timestamp?: Date;
-    [key: string]: any; // Allow additional properties 
-}
+// Function to save a new reading and update the device's last_seen timestamp atomically
+
+
 
 export const saveReading = async (deviceId: string, payload: ReadingPayload): Promise<Pick<ReadingModel, 'reading_id'>> => {
 

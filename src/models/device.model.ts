@@ -10,3 +10,11 @@ export interface DeviceModel {
     created_at: Date;
     last_seen: Date | null;
 }
+
+export interface DeviceRegistrationData {
+    name: string;
+    location?: string;
+    owner_email: string;
+    model?: string;
+    firmware?: string;
+}

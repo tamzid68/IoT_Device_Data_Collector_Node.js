@@ -1,16 +1,8 @@
 import { Request, Response } from 'express';
 import logger from '../utils/logger.utils';
 import { findReadings } from '../services/reading.service';
+import { ReadingParams } from '../models/reading.model';
 
-// This type should match the `GetReadingsParams` in your service.
-// It ensures the controller builds the correct object for the service.
-type ReadingParams = {
-    device_id: string;
-    start_time?: Date;
-    end_time?: Date;
-    limit?: number;
-    sort?: 'asc' | 'desc';
-};
 
 export const getReadings = async (req: Request, res: Response) => {
     try {

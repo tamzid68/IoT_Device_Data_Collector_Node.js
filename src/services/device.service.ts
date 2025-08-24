@@ -1,14 +1,8 @@
 import crypto from 'crypto';
 import {executeQuery} from '../configs/database.config';
 import logger from '../utils/logger.utils';
+import {DeviceRegistrationData} from '../models/device.model';
 
-interface DeviceRegistrationData {
-    name: string;
-    location?: string;
-    owner_email: string;
-    model?: string;
-    firmware?: string;
-}
 
 /**
  * Creates a new device, generates a deviceId and apiKey, and saves it to the database.

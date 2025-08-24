@@ -1,17 +1,11 @@
-import {ReadingModel} from '../models/reading.model';
+import {ReadingModel, GetReadingsParams} from '../models/reading.model';
 import {executeQuery} from '../configs/database.config';
 import logger from '../utils/logger.utils';
 
 // The service can return a partial model to match the desired API response
 type ReadingQueryResult = Pick<ReadingModel, 'temperature' | 'humidity' | 'reading_time'>;
 
-interface GetReadingsParams {
-    device_id: string;
-    start_time?: Date;
-    end_time?: Date;
-    limit?: number;
-    sort?: 'asc' | 'desc';
-}
+
 
 
 export const findReadings = async (params: GetReadingsParams): Promise<ReadingQueryResult[]> => {
