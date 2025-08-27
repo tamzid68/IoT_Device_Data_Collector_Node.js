@@ -51,3 +51,23 @@ export const findReadings = async (params: GetReadingsParams): Promise<ReadingQu
         throw new Error('Failed to retrieve readings from the database.');
     }
 };
+
+export const aggregateStats = async (params: GetReadingsParams) => {
+    const {
+        device_id,
+        start_time,
+        end_time,
+        interval = 'day',
+    } = params;
+
+    if (!device_id) {
+        throw new Error('device_id is required to aggregate statistics.');
+    }
+
+    // Placeholder for aggregation logic
+    // This function should implement the logic to compute aggregate statistics
+    // such as average, min, max over the specified interval (hourly, daily, monthly)
+    // For now, it returns an empty object.
+
+    return {};
+};
