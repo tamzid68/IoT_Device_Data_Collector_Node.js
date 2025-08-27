@@ -1,9 +1,11 @@
 import {Router} from 'express';
 import {getReadings} from '../controllers/reading.controller';
 import {getReadingsValidator} from '../validators/reading.validator';
+import {apiKeyAuth} from '../middleware/auth.middleware';
+
 const router = Router();
 
-router.get('/',getReadingsValidator, getReadings);
+router.get('/',apiKeyAuth,getReadingsValidator, getReadings);
 
 
 export default router;
