@@ -1,5 +1,5 @@
-import {ReadingModel, GetReadingsParams} from '../models/reading.model';
-import {executeQuery} from '../configs/database.config';
+import { ReadingModel, GetReadingsParams, AggregateStat } from '../models/reading.model';
+import { executeQuery } from '../configs/database.config';
 import logger from '../utils/logger.utils';
 
 // The service can return a partial model to match the desired API response
@@ -52,7 +52,7 @@ export const findReadings = async (params: GetReadingsParams): Promise<ReadingQu
     }
 };
 
-export const aggregateStats = async (params: GetReadingsParams) => {
+export const aggregateStats = async (params: GetReadingsParams): Promise<AggregateStat[]> => {
     const {
         device_id,
         start_time,
@@ -64,10 +64,43 @@ export const aggregateStats = async (params: GetReadingsParams) => {
         throw new Error('device_id is required to aggregate statistics.');
     }
 
-    // Placeholder for aggregation logic
-    // This function should implement the logic to compute aggregate statistics
-    // such as average, min, max over the specified interval (hourly, daily, monthly)
-    // For now, it returns an empty object.
+    //Whitelist interval to prevent SQL injection, as it's injected directly into the query.
+    const validIntervals = ['day', 'week', 'month'];
+    if (!validIntervals.includes(interval)) {
+        throw new Error(`Invalid interval. Must be one of: ${validIntervals.join(', ')}`);
+    }
+    const queryParams: (string | Date)[] = [device_id];
+    let paramIndex = 2;
 
-    return {};
+    let timeFilter = '';
+    if (start_time) {
+        timeFilter += ` AND reading_time >= $${paramIndex++}`;
+        queryParams.push(start_time);
+    }
+    if (end_time) {
+        timeFilter += ` AND reading_time <= $${paramIndex++}`;
+        queryParams.push(end_time);
+    }
+
+    const queryText = `
+        SELECT 
+            DATE_TRUNC('${interval}', reading_time) AS date,
+            ROUND(AVG(temperature), 2) AS avg_temp,
+            MIN(temperature) AS min_temp,
+            MAX(temperature) AS max_temp,
+            ROUND(AVG(humidity), 2) AS avg_humidity,
+            COUNT(*)::INT AS count
+        FROM readings
+        WHERE device_id = $1 ${timeFilter}
+        GROUP BY date
+        ORDER BY date ASC;
+    `;
+
+    try {
+        const { rows } = await executeQuery(queryText, queryParams);
+        return rows;
+    } catch (error) {
+        logger.error(`Database error in aggregateStats for device: ${device_id}`, { error });
+        throw new Error('Failed to retrieve aggregate statistics from the database.');
+    }
 };

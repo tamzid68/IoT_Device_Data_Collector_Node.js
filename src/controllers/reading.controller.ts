@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import logger from '../utils/logger.utils';
-import { findReadings } from '../services/reading.service';
+import { findReadings, aggregateStats } from '../services/reading.service';
+import { GetReadingsParams } from '../models/reading.model';
 
 
 export const getReadings = async (req: Request, res: Response) => {
@@ -34,20 +35,27 @@ export const getReadings = async (req: Request, res: Response) => {
 
 
 export const getAggregateStats = async (req: Request, res: Response) => {
-    const queryParams = {
-        device_id: req.query.device_id as string,
-        start_time: req.query.start_time as Date | undefined,
-        end_time: req.query.end_time as Date | undefined,
-        interval: req.query.interval as 'hour' | 'day' | 'monthly' | undefined,
-    };
+    // const queryParams = {
+    //     device_id: req.query.device_id as string,
+    //     start_time: req.query.start_time as Date | undefined,
+    //     end_time: req.query.end_time as Date | undefined,
+    //     interval: req.query.interval as 'hour' | 'day' | 'monthly' | undefined,
+    // };
     try {
-        
+
+        const stats = await aggregateStats(req.query as unknown as GetReadingsParams)
+
         res.status(200).json({
             message: 'Aggregate statistics endpoint - to be implemented',
-            query: queryParams
+            device_id: req.query.device_id,
+            interval: req.query.interval || 'day',
+            stats: stats,
         });
     } catch (error: any) {
-        logger.error(`Error fetching aggregate statistics: ${error.message}`);
-        res.status(500).json({ error: 'Internal Server Error' });
+        logger.error(`Error in getAggregateStats controller: ${error.message}`);
+        if (error.message.startsWith('Invalid interval')) {
+            return res.status(400).json({ message: error.message });
+        }
+        res.status(500).json({ message: 'Failed to retrieve aggregate statistics.' });
     }
 }
