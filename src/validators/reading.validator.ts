@@ -5,6 +5,9 @@ import { handleValidationErrors } from '../middleware/validation.middleware';
  * An array of validation middleware for the get readings endpoint.
  * It validates the query parameters for fetching historical data.
  */
+
+const validIntervals = ['day', 'week', 'month'];
+
 export const getReadingsValidator = [
     query('device_id')
         .notEmpty().withMessage('device_id is a required query parameter.')
@@ -31,5 +34,22 @@ export const getReadingsValidator = [
         .toLowerCase(),
 
     // This must be the last item in the array to process the validation results.
+    handleValidationErrors,
+];
+
+
+export const getStatsValidator = [
+    query('device_id')
+        .isString().withMessage('device_id must be a string.').notEmpty().withMessage('device_id is required.'),
+
+    query('start_time')
+        .optional().isISO8601().withMessage('start_time must be a valid ISO 8601 date.').toDate(),
+
+    query('end_time')
+        .optional().isISO8601().withMessage('end_time must be a valid ISO 8601 date.').toDate(),
+
+    query('interval')
+        .optional().isIn(validIntervals).withMessage(`interval must be one of: ${validIntervals.join(', ')}`),
+
     handleValidationErrors,
 ];
