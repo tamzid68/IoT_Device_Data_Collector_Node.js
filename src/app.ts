@@ -4,6 +4,7 @@ import cors from 'cors';
 import deviceRoutes from './routes/device.routes';
 import dataRoutes from './routes/data.routes';
 import readingRoutes from './routes/reading.routes';
+import alertRoutes from './routes/alert.routes';
 import { connectToPostgreSQL, testDatabaseConnection } from './configs/database.config';
 import logger from './utils/logger.utils';
 
@@ -25,6 +26,7 @@ app.get('/health', (req, res) => {
 app.use('/api/v1/devices', deviceRoutes);
 app.use('/api/v1/data', dataRoutes);
 app.use('/api/v1/readings', readingRoutes);
+app.use('/api/v1/alerts', alertRoutes);
 
 // Start the server
 app.listen(PORT, async () => {
