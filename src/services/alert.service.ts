@@ -14,3 +14,11 @@ export const createAlert = async (payload: alertModel.CreatesAlertPayload): Prom
     const {rows} = await executeQuery(query, values);
     return rows[0];
 };
+
+// Finds all alert configurations for a specific device.
+
+export const getAlerts = async (device_id: string): Promise<alertModel.AlertModel[]> => {
+    const query = `SELECT * FROM alerts WHERE device_id = $1 ORDER BY created_at ASC;`;
+    const {rows} = await executeQuery(query, [device_id]);
+    return rows;
+};

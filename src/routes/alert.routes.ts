@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { createAlertHandler } from "../controllers/alert.controller";
-import { createAlertValidator } from "../validators/alert.validator";
+import { createAlertHandler, getAlertsHandler } from "../controllers/alert.controller";
+import { createAlertValidator, getAlertsValidator } from "../validators/alert.validator";
 const router = Router();
 
 // Note: These endpoints are typically protected by a different authentication
@@ -8,5 +8,6 @@ const router = Router();
 // For simplicity, we are omitting that middleware here.
 
 router.post('/create', createAlertValidator, createAlertHandler);
+router.get('/get', getAlertsValidator, getAlertsHandler);
 
 export default router;

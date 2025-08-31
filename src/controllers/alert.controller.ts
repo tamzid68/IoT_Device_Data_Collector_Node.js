@@ -17,4 +17,15 @@ export const createAlertHandler = async (req: Request, res: Response) => {
 
         res.status(500).json({ message: 'Internal Server Error' });
     }
-}
+};
+
+export const getAlertsHandler = async (req: Request, res: Response) => {
+    try{
+        const device_id = req.query.device_id as string ;
+        const alerts = await alertService.getAlerts(device_id);
+        res.status(200).json(alerts);
+    }catch(error: any){
+        logger.error('Error fetching alerts:', error.message);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+};

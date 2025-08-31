@@ -12,3 +12,7 @@ export const createAlertValidator = [
     handleValidationErrors,
 ];
 
+export const getAlertsValidator = [
+    query('device_id').isString().notEmpty().withMessage('device_id is required and must be a non-empty string'),
+    handleValidationErrors,
+]; 
