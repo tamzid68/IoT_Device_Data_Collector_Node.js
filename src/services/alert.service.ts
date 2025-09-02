@@ -1,3 +1,4 @@
+import { count } from "console";
 import { executeQuery } from "../configs/database.config";
 import * as alertModel from "../models/alert.model";
 import logger from "../utils/logger.utils";
@@ -47,5 +48,25 @@ const triggerAlert = async (alert: alertModel.AlertModel, currentValue: number) 
 // in the alerting system does not prevent data ingestion.
 
 export const checkAlerts =  async (device_id: string, reading: Reading)=>{
-    
+    try{
+        const alerts = await findAlertsByDevice(device_id);
+        if(alerts.length === 0)
+            return;// No alerts configured for this device.
+
+        for(const alert of alerts){
+            //The model should enforce that metric is either 'temperature' or 'humidity'.
+            const value = reading[alert.metric as keyof Reading];
+            if(value === undefined|| value === null) continue;// No relevant data in the reading.
+
+            const isMaxBreached = alert.threshold_type === 'max' && value > alert.threshold_value;
+            const isMinBreached = alert.threshold_type === 'min' && value < alert.threshold_value;
+
+            if(isMaxBreached || isMinBreached){
+                await triggerAlert(alert, value);
+            }
+        }
+
+    }catch(error:any){
+        logger.error(`Error checking alerts for device ${device_id}: ${error.message}`);
+    }
 }
