@@ -1,5 +1,6 @@
 import { pool } from '../configs/database.config';
 import { ReadingModel, ReadingPayload } from '../models/reading.model';
+import { checkAlerts } from './alert.service';
 import logger from "../utils/logger.utils";
 
 // Function to save a new reading and update the device's last_seen timestamp atomically
@@ -11,7 +12,7 @@ export const saveReading = async (deviceId: string, payload: ReadingPayload): Pr
     const { temperature, humidity } = payload;
     // The timestamp is already a Date object thanks to the validator's .toDate() sanitizer.
     const readingTime = payload.timestamp || new Date();
-    
+
     // Get a client from the pool to run multiple queries in a transaction
     const client = await pool.connect();
 
@@ -37,6 +38,11 @@ export const saveReading = async (deviceId: string, payload: ReadingPayload): Pr
         await client.query('COMMIT');
 
         logger.info(`Saved new reading ${newReading.reading_id} and updated last_seen for device ${deviceId}.`);
+        // Trigger alert check asynchronously ("fire-and-forget").
+        // We do NOT `await` this call. This ensures the response to the device
+        // is not delayed by alert processing.
+        checkAlerts(deviceId, payload);
+        
         return newReading;
     } catch (error) {
         // If any query fails, roll back the entire transaction

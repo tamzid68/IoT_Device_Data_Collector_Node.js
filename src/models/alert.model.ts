@@ -6,7 +6,7 @@ export interface AlertModel {
     device_id: string;
     metric: 'temperature' | 'humidity';
     threshold_type: 'min' | 'max';
-    threshould_value: number;
+    threshold_value: number;
     created_at: Date;   
 }
 

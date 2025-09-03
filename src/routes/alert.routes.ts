@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createAlertHandler, getAlertsHandler } from "../controllers/alert.controller";
+import { createAlertHandler, getAlertsHandler, getAlertsEventsByDevice } from "../controllers/alert.controller";
 import { createAlertValidator, getAlertsValidator } from "../validators/alert.validator";
 const router = Router();
 
@@ -7,10 +7,10 @@ const router = Router();
 // mechanism (e.g., JWT for a logged-in user) than the device-specific x-api-key.
 // For simplicity, we are omitting that middleware here.
 
-// router.post('/create', createAlertValidator, createAlertHandler);
-// router.get('/get', getAlertsValidator, getAlertsHandler);
-router.post('/', createAlertValidator, createAlertHandler);
-router.get('/', getAlertsValidator, getAlertsHandler);
+ router.post('/create', createAlertValidator, createAlertHandler);
+ router.get('/get', getAlertsValidator, getAlertsHandler);
+ router.get('/alert_events', getAlertsValidator, getAlertsEventsByDevice);
+
 
 
 export default router;
