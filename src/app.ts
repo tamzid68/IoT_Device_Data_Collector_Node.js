@@ -5,8 +5,9 @@ import deviceRoutes from './routes/device.routes';
 import dataRoutes from './routes/data.routes';
 import readingRoutes from './routes/reading.routes';
 import alertRoutes from './routes/alert.routes';
-import { connectToPostgreSQL, testDatabaseConnection } from './configs/database.config';
 import logger from './utils/logger.utils';
+import rateLimitMiddleware from './middleware/rateLimit';
+import { connectToPostgreSQL, testDatabaseConnection } from './configs/database.config';
 
 dotenv.config();
 
@@ -16,6 +17,7 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(rateLimitMiddleware); // Apply rate limiting to all requests
 app.use(express.urlencoded({ extended: true }));
 
 // A simple health check endpoint to verify the server is running
