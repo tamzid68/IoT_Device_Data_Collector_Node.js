@@ -7,6 +7,7 @@ import readingRoutes from './routes/reading.routes';
 import alertRoutes from './routes/alert.routes';
 import logger from './utils/logger.utils';
 import rateLimitMiddleware from './middleware/rateLimit';
+import checkClient from './middleware/clientCheck';
 import { connectToPostgreSQL, testDatabaseConnection } from './configs/database.config';
 
 dotenv.config();
@@ -19,6 +20,7 @@ app.use(cors());
 app.use(express.json());
 app.use(rateLimitMiddleware); // Apply rate limiting to all requests
 app.use(express.urlencoded({ extended: true }));
+app.use(checkClient); // Check client user-agent for all requests
 
 // A simple health check endpoint to verify the server is running
 app.get('/health', (req, res) => {
